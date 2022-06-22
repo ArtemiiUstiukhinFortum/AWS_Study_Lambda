@@ -4,14 +4,52 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GFG</title>
+    <title>Fortum Coffee</title>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        html {
+            display: table;
+            margin: auto;
+        }
+        body {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .my-form {
+            display: flex;
+            justify-content: space-between;       
+        }
+        .form-child {
+            height: 30px;
+            width: 23%;
+         }
+    </style>
 </head>
 <body>
-    <h1>Hello World this is my first web page.</h1>
-    <form action="https://g7fl76t2dnxgf4ofakf3e23rs40ajqqt.lambda-url.eu-west-1.on.aws/" method="POST">
-        <input type="text" name="value1"> <br />
-        <input type="text" name="value2"> <br />
-        <input type="submit">
+    <h1>Order your best 2-nd floor Fortum coffee here online now!</h1>
+    <form onsubmit="orderCoffee();" class="my-form">
+        <input type="text" id="name-input" placeholder="Enter your Name" class="form-child">
+        <input type="email" id="email-input" placeholder="Enter your Email" class="form-child" pattern=".+@fortum\.com">
+        <select name="coffee" id="coffee" class="form-child">
+            <option value="Americano">Americano</option>
+            <option value="Capuchino">Capuchino</option>
+            <option value="Latte">Latte</option>
+            <option value="Tea">Tea</option>
+            <option value="BreakLambda">BreakLambda</option>
+        </select>
+        <input type="submit" class="form-child">
     </form>
+    <script>
+        function orderCoffee() {
+            const name = document.getElementById("name-input").value;
+            //const email = encodeURIComponent(document.getElementById("email-input").value);
+            const email = document.getElementById("email-input").value;
+            const drink = document.getElementById("coffee").value;
+            const a = "https://g7fl76t2dnxgf4ofakf3e23rs40ajqqt.lambda-url.eu-west-1.on.aws?" + "name=" + name + "&email=" + email + "&drink=" + drink;
+            window.open(a);
+        }
+    </script>
 </body>
 </html>
