@@ -20,6 +20,12 @@ logger = Logger()
 @logger.inject_lambda_context(log_event=True)
 def lambda_handler(event: Dict, context: LambdaContext):
 
+    if "body" not in event or not event["body"]:
+        return {
+            "statusCode": 200,
+            "body": "Please submit an order",
+        }
+
     body = (
         b64decode(event["body"]).decode("utf-8")
         if event["isBase64Encoded"]
