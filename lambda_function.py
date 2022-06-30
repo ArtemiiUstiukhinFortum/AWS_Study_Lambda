@@ -5,7 +5,10 @@ from urllib.parse import parse_qs
 import boto3
 import botocore
 from aws_lambda_powertools import Logger, Metrics, Tracer
-from aws_lambda_powertools.event_handler.api_gateway import APIGatewayHttpResolver
+from aws_lambda_powertools.event_handler.api_gateway import (
+    APIGatewayHttpResolver,
+    Response,
+)
 from aws_lambda_powertools.logging import correlation_paths
 
 service = "COFFEE_APP"
@@ -24,17 +27,25 @@ sns_topic_arn_base = "arn:aws:sns:eu-west-1:712531873081:drink-order-topic-for-"
 logger = Logger()
 
 
+def htmlResponse(body: str):
+    return Response(
+        status_code=200,
+        content_type="text/html",
+        body=body,
+    )
+
+
 @app.get("/")
 @tracer.capture_method
 def index():
     with open("index.html") as f:
-        return {"message": f.read()}
+        return htmlResponse(f.read())
 
 
 @app.get("/hello")
 @tracer.capture_method
 def hello():
-    return {"message": "Hello world!"}
+    return htmlResponse("Hello world!")
 
 
 @app.post("/")
@@ -59,33 +70,25 @@ def submit_order():
         topic = sns.get_topic_attributes(TopicArn=topic_arn)
         subscribers_no = topic["SubscriptionsConfirmed"]
         if subscribers_no == 0:
-            return {
-                "statusCode": 200,
-                "body": json.dumps(
-                    "Please confirm your email and then resubmit your drink"
-                ),
-            }
+            return htmlResponse(
+                "Please confirm your email and then resubmit your drink"
+            )
+
     except botocore.exceptions.ClientError as e:
         logger.exception(e)
         # You need to create the topic and subsribe the email here
-        return {
-            "statusCode": 200,
-            "body": json.dumps(
-                "Please confirm your email and then resubmit your drink"
-            ),
-        }
+        return htmlResponse("Please confirm your email and then resubmit your drink")
 
     messageToSQS = {"name": name, "email": email, "drink": drink}
 
     sqs.send_message(QueueUrl=queue_url, MessageBody=json.dumps(messageToSQS))
 
-    return {
-        "statusCode": 200,
-        "body": f"""
+    return htmlResponse(
+        f"""
             Thanks for the order! You will receive a message on email "{email}" when
             your drink is ready. Your order: "{drink}" for "{name}"
-        """,
-    }
+        """
+    )
 
 
 @tracer.capture_lambda_handler
