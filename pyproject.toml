@@ -1,0 +1,39 @@
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+testpaths = ["tests"]
+markers = ["aws"]
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.poetry]
+name = "study-lambda"
+version = "0.1.0"
+description = ""
+authors = [
+  "Artemii Ustiukhin <artemii.ustiukhin@fortum.com>",
+  "Ville Väänänen <ville.vaananen@fortum.com>",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+aws-lambda-powertools = "^1.26.1"
+boto3 = "^1.24.21"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.961"
+black = "^22.3.0"
+flake8 = "^4.0.1"
+pytest = "^7.1.2"
+isort = "^5.10.1"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
