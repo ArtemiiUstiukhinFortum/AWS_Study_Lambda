@@ -4,6 +4,7 @@ from typing import Dict
 from urllib.parse import parse_qs
 
 import boto3
+import botocore
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
@@ -43,7 +44,8 @@ def lambda_handler(event: Dict, context: LambdaContext):
                     "Please confirm your email and then resubmit your drink"
                 ),
             }
-    except boto3.exceptions.ClientError:
+    except botocore.exceptions.ClientError as e:
+        logger.error(e)
         # You need to create the topic and subsribe the email here
         return {
             "statusCode": 200,
